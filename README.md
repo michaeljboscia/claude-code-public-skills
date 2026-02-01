@@ -41,7 +41,7 @@ This repository contains battle-tested patterns, protocols, and skills developed
 **Total Skills:** *Auto-generated catalog will appear here*
 
 <!-- BEGIN AUTO-GENERATED CATALOG -->
-### Available Skills (7 total)
+### Available Skills (8 total)
 
 #### [n8n-api-mcp-server](skills/n8n-api-mcp-server.md)
 
@@ -56,6 +56,8 @@ This repository contains battle-tested patterns, protocols, and skills developed
 #### [n8n-workflow-development-lessons](skills/n8n-workflow-development-lessons.md)
 
 #### [n8n-workflow-development](skills/n8n-workflow-development.md)
+
+#### [supabase-api](skills/supabase-api.md)
 
 <!-- END AUTO-GENERATED CATALOG -->
 
@@ -214,4 +216,4 @@ MIT License - See [LICENSE](LICENSE) for details
 
 ---
 
-**Last Updated:** 2026-02-01 00:54:52 EST
+**Last Updated:** 2026-02-01 01:41:08 EST
