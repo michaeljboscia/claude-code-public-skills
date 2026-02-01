@@ -6,7 +6,7 @@ shareable: true
 
 # n8n Workflow Development: Lessons Learned
 **Last Updated:** 2026-01-26
-**Context:** Real production projects with complex integrations
+**Context:** Sequence-to-Queue System Migration (Phases 1 & 2), PSI Diagnostic Workflows Bug Fix, Instantly-HubSpot Engagements Integration
 
 ---
 
@@ -123,7 +123,7 @@ Extract Data → Create Sequence → Parse Multi-Touch → Insert Queue
 
 ### 4. Verify External Property Names Before Building Workflows
 
-**Problem:** Used `your_property_name` when actual HubSpot property was `correct_property_name`.
+**Problem:** Used `ba_content_draft_url` when actual HubSpot property was `ba_sequence_google_doc_url`.
 
 **Prevention:**
 1. Query HubSpot API for object properties first
@@ -214,7 +214,7 @@ WHERE score IS NOT NULL;
 ### 6. JSON.stringify() is Mandatory for User-Generated Content in HTTP Request Nodes
 
 **Date Discovered:** 2026-01-26
-**Affected Workflow:** External Service Webhook Handler
+**Affected Workflow:** Instantly to HubSpot - Webhook Handler
 
 **Problem:** User-generated content (reply text, email bodies) contains quotes, newlines, and special characters that break JSON templates.
 
@@ -300,7 +300,7 @@ If `reply_text` contains `"Hello\nHow are you?"` the JSON becomes invalid.
 
 **What to Backup:**
 - Export workflow JSON via n8n API or UI
-- Save to: `~/your-drive-folder/[project]/backups/[workflow-name]-backup-YYYY-MM-DD.json`
+- Save to: `~/My Drive/GTM Machine content/[project]/backups/[workflow-name]-backup-YYYY-MM-DD.json`
 - Include date and "before what" in filename
 
 **Why:**
@@ -314,7 +314,7 @@ If `reply_text` contains `"Hello\nHow are you?"` the JSON becomes invalid.
 # Use n8n UI: Settings → Export → Download JSON
 
 # Or via API:
-curl https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows/WORKFLOW_ID \
+curl https://binaryanvil.app.n8n.cloud/api/v1/workflows/WORKFLOW_ID \
   -H "X-N8N-API-KEY: YOUR_KEY" > backup.json
 ```
 
@@ -385,7 +385,7 @@ curl https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows/WORKFLOW_ID \
 
 **Example Scratch Log:**
 ```
-2026-01-23 14:30 - Changed your_property_name to correct_property_name
+2026-01-23 14:30 - Changed ba_content_draft_url to ba_sequence_google_doc_url
   Why: Field not found error, checked HubSpot properties, found correct name
 
 2026-01-23 14:45 - Replaced HTTP Request with Code node for Create Sequence
@@ -579,9 +579,9 @@ const singleRecord = $('Previous Node').first().json;
 
 ## Related Skills
 
-- `/Users/yourusername/.claude/skills/n8n-mcp.md` - n8n MCP tool usage
-- `/Users/yourusername/.claude/skills/supabase-integration.md` - Supabase patterns
-- `/Users/yourusername/.claude/infrastructure.md` - n8n infrastructure details
+- `/Users/mikeboscia/.claude/skills/n8n-mcp.md` - n8n MCP tool usage
+- `/Users/mikeboscia/.claude/skills/supabase-integration.md` - Supabase patterns
+- `/Users/mikeboscia/.claude/infrastructure.md` - n8n infrastructure details
 
 ---
 

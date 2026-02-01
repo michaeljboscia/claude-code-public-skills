@@ -962,4 +962,4 @@ Data flows as arrays of objects: `[{"json": {...}, "binary": {...}}]`.
 
 ---
 
-**Source Document:** `/Users/yourusername/My Drive/GTM Machine content/Research & Strategy/Complete n8n Node Implementation Reference.md`
+**Source Document:** `/Users/mikeboscia/My Drive/GTM Machine content/Research & Strategy/Complete n8n Node Implementation Reference.md`

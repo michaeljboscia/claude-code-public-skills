@@ -7,8 +7,8 @@ shareable: true
 # n8n REST API & MCP Server - Claude Code Skill
 
 **Last Updated:** 2026-01-31
-**API Version:** v1.1.1 | **MCP Server Version:** v2.33.4
-**Purpose:** Complete reference for n8n REST API endpoints and MCP server tools
+**API Version:** v1.1.1 | **MCP Server Version:** v2.33.x
+**Purpose:** Exhaustive reference for n8n REST API endpoints and all 20 MCP server tools
 
 ---
 
@@ -35,97 +35,136 @@ This skill covers two interfaces for programmatic n8n access:
 
 # PART 1: n8n REST API Reference
 
-The n8n Public REST API (OpenAPI 3.0.0) provides programmatic access to workflows, executions, credentials, and administrative functions. All endpoints use the `/api/v1` prefix.
+**Base URL:** `https://your-instance.com/api/v1`
+**OpenAPI:** 3.0.0
 
 ## Authentication
 
 ⚠️ **CRITICAL:** Uses `X-N8N-API-KEY` header—NOT Bearer tokens.
 
-| Header | Value |
-|--------|-------|
-| `X-N8N-API-KEY` | Your API key (required) |
-| `Content-Type` | `application/json` (for POST/PUT/PATCH) |
+| Header | Value | Required |
+|--------|-------|----------|
+| `X-N8N-API-KEY` | Your API key from Settings → n8n API | Yes |
+| `Content-Type` | `application/json` (for POST/PUT/PATCH) | Yes |
 
 ```bash
 curl -X GET "https://your-n8n.com/api/v1/workflows" \
   -H "X-N8N-API-KEY: your-api-key"
 ```
 
-Generate keys at: **Settings → n8n API → Create API Key**
+---
+
+## HTTP Status Codes
+
+| Code | Name | Description |
+|------|------|-------------|
+| 200 | OK | Operation successful |
+| 201 | Created | Resource created |
+| 204 | No Content | Success, no body |
+| 400 | Bad Request | Invalid parameters/malformed JSON |
+| 401 | Unauthorized | Invalid/missing API key |
+| 403 | Forbidden | Insufficient permissions |
+| 404 | Not Found | Resource doesn't exist |
+| 409 | Conflict | Duplicate or version conflict |
+| 415 | Unsupported Media Type | Wrong content type |
 
 ---
 
-## Pagination
+## Pagination (All List Endpoints)
 
-All list endpoints use cursor-based pagination.
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `limit` | integer | 100 | Results per page (max: 250) |
-| `cursor` | string | — | Pagination cursor from previous response |
+| Parameter | Type | Default | Max | Description |
+|-----------|------|---------|-----|-------------|
+| `limit` | number | 100 | 250 | Maximum items per page |
+| `cursor` | string | - | - | Pagination cursor from `nextCursor` |
 
 ---
 
-## Complete Endpoint Reference
-
-### Workflows (`/workflows`)
+## Workflows Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/workflows` | List all workflows |
-| `POST` | `/workflows` | Create new workflow |
+| `POST` | `/workflows` | Create new workflow (INACTIVE) |
 | `GET` | `/workflows/{id}` | Get specific workflow |
-| `PUT` | `/workflows/{id}` | Update workflow (full replacement) |
+| `PUT` | `/workflows/{id}` | Update workflow (FULL REPLACEMENT) |
 | `DELETE` | `/workflows/{id}` | Delete workflow |
 | `POST` | `/workflows/{id}/activate` | Activate workflow |
 | `POST` | `/workflows/{id}/deactivate` | Deactivate workflow |
-| `PUT` | `/workflows/{id}/transfer` | Transfer to another project |
+| `PUT` | `/workflows/{id}/transfer` | Transfer to project (Enterprise) |
 | `GET` | `/workflows/{id}/tags` | Get workflow tags |
-| `PUT` | `/workflows/{id}/tags` | Update workflow tags |
+| `PUT` | `/workflows/{id}/tags` | Update workflow tags (REPLACES all) |
+| `GET` | `/workflows/{id}/{versionId}` | Get specific version |
 
-#### GET /workflows - Query Parameters
+### GET /workflows - Query Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
 | `active` | boolean | No | Filter by active status |
 | `tags` | string | No | Comma-separated tag names |
-| `name` | string | No | Filter by workflow name |
-| `projectId` | string | No | Filter by project (Enterprise) |
-| `excludePinnedData` | boolean | No | Exclude pinned test data |
+| `name` | string | No | Filter by workflow name (partial match) |
+| `projectId` | string | No | Filter by project ID (Enterprise) |
+| `excludePinnedData` | boolean | No | Avoid retrieving pinned data |
 
-#### POST /workflows - Request Body
+### POST /workflows - Complete Schema
 
-```json
-{
-  "name": "string (required)",
-  "nodes": [
-    {
-      "id": "string (UUID)",
-      "name": "string (unique within workflow)",
-      "type": "string (e.g., n8n-nodes-base.webhook)",
-      "typeVersion": "number (e.g., 1, 1.1, 2)",
-      "position": "[x, y] coordinates",
-      "parameters": "object (node-specific)",
-      "credentials": "object (optional)",
-      "disabled": "boolean (optional)"
+```typescript
+interface WorkflowNode {
+  id: string;                    // Unique ID within workflow
+  name: string;                  // Display name (must be unique)
+  type: string;                  // Full type: "n8n-nodes-base.webhook"
+  typeVersion: number;           // Node version (e.g., 1, 2)
+  position: [number, number];    // [x, y] canvas coordinates
+  parameters: Record<string, any>;  // Node-specific configuration
+  credentials?: {                // Credential references
+    [credentialType: string]: {
+      id: string;
+      name: string;
     }
-  ],
-  "connections": {
-    "NodeName": {
-      "main": [[{"node": "TargetNode", "type": "main", "index": 0}]]
-    }
-  },
-  "settings": {
-    "executionOrder": "v1",
-    "saveManualExecutions": "boolean",
-    "timezone": "string (e.g., America/New_York)"
+  };
+  webhookId?: string;            // For webhook nodes
+  disabled?: boolean;            // Default: false
+  notes?: string;                // Node notes
+  notesInFlow?: boolean;         // Show notes in canvas
+  executeOnce?: boolean;         // Execute only once
+  alwaysOutputData?: boolean;    // Output even on error
+  retryOnFail?: boolean;         // Enable retry
+  maxTries?: number;             // Max retry attempts (default: 3)
+  waitBetweenTries?: number;     // Retry delay in ms (default: 1000)
+  onError?: 'stopWorkflow' | 'continueRegularOutput' | 'continueErrorOutput';
+}
+
+interface Connections {
+  [sourceNodeName: string]: {
+    main: Array<Array<{
+      node: string;    // Target node name
+      type: 'main';    // Connection type
+      index: number;   // Input index (0 = first input)
+    }>>;
+    // For AI nodes:
+    ai_languageModel?: Array<Array<ConnectionTarget>>;
+    ai_tool?: Array<Array<ConnectionTarget>>;
+    ai_memory?: Array<Array<ConnectionTarget>>;
+    ai_outputParser?: Array<Array<ConnectionTarget>>;
   }
+}
+
+interface WorkflowSettings {
+  saveExecutionProgress?: boolean;
+  saveManualExecutions?: boolean;
+  saveDataErrorExecution?: 'all' | 'none';
+  saveDataSuccessExecution?: 'all' | 'none';
+  executionTimeout?: number;             // Max: 3600 seconds
+  errorWorkflow?: string;                // Workflow ID to run on error
+  timezone?: string;                     // IANA timezone
+  executionOrder?: 'v0' | 'v1';          // v1 recommended
+  callerPolicy?: 'any' | 'none' | 'workflowsFromAList' | 'workflowsFromSameOwner';
+  callerIds?: string;                    // Comma-separated workflow IDs
 }
 ```
 
 ---
 
-### Executions (`/executions`)
+## Executions Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -134,111 +173,177 @@ All list endpoints use cursor-based pagination.
 | `DELETE` | `/executions/{id}` | Delete execution |
 | `POST` | `/executions/{id}/retry` | Retry failed execution |
 
-#### GET /executions - Query Parameters
+### GET /executions - Query Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `includeData` | boolean | Include full execution data |
-| `status` | enum | `canceled`, `error`, `running`, `success`, `waiting` |
-| `workflowId` | string | Filter by workflow |
+| Name | Type | Description |
+|------|------|-------------|
+| `includeData` | boolean | Include execution's detailed data |
+| `status` | string | `canceled`, `error`, `success`, `waiting` |
+| `workflowId` | string | Filter by workflow ID |
 
-⚠️ **Known Issue:** `waiting` status may not return results in some versions.
+⚠️ **KNOWN ISSUE:** `running` status is NOT accepted despite documentation.
+
+⚠️ **KNOWN ISSUE:** Executions with `status: waiting` may not be returned.
+
+### Execution Response Schema
+
+```typescript
+interface Execution {
+  id: number;                    // Execution ID (number, not string)
+  workflowId: string;            // ⚠️ STRING not number (schema bug)
+  finished: boolean;
+  mode: 'cli' | 'error' | 'integrated' | 'internal' | 'manual' |
+        'retry' | 'trigger' | 'webhook' | 'evaluation' | 'chat';
+  retryOf: string | null;
+  retrySuccessId: string | null;
+  startedAt: string;             // ISO 8601
+  stoppedAt: string | null;
+  waitTill: string | null;
+  status: 'canceled' | 'crashed' | 'error' | 'new' | 'running' |
+          'success' | 'unknown' | 'waiting';
+  data?: {                       // Only if includeData=true
+    resultData: {
+      runData: {
+        [nodeName: string]: Array<{
+          startTime: number;
+          executionTime: number;
+          data: { main: Array<Array<{ json: any; binary?: any }>> };
+        }>;
+      };
+      lastNodeExecuted: string;
+      error?: ExecutionError;
+    };
+  };
+}
+```
 
 ---
 
-### Credentials (`/credentials`)
+## Credentials Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/credentials` | List credentials (metadata only) |
 | `POST` | `/credentials` | Create credential |
+| `PATCH` | `/credentials/{id}` | Update credential (owner only) |
 | `DELETE` | `/credentials/{id}` | Delete credential (owner only) |
-| `GET` | `/credentials/schema/{credentialTypeName}` | Get credential JSON schema |
+| `GET` | `/credentials/schema/{typeName}` | Get credential JSON schema |
 
-⚠️ **Note:** Credentials cannot be updated via API (`PUT /credentials/{id}` does NOT exist).
+⚠️ **IMPORTANT:** Returns ONLY metadata (id, name, type). Credential data/secrets are NEVER returned.
 
----
+### Credential Type Examples
 
-### Tags, Users, Variables, Projects
+```json
+// GitHub API
+{"type": "githubApi", "data": {"accessToken": "your-github-pat"}}
 
-| Resource | Endpoints |
-|----------|-----------|
-| **Tags** | `GET/POST/PUT/DELETE /tags`, `GET/PUT/DELETE /tags/{id}` |
-| **Users** | `GET/POST /users`, `GET/DELETE /users/{id}`, `PATCH /users/{id}/role` (Admin only) |
-| **Variables** | `GET/POST /variables`, `PUT/DELETE /variables/{id}` (Pro/Enterprise) |
-| **Projects** | `GET/POST /projects`, `PUT/DELETE /projects/{id}` (Enterprise) |
+// Slack API
+{"type": "slackApi", "data": {"accessToken": "xoxb-xxx"}}
 
----
+// HTTP Header Auth
+{"type": "httpHeaderAuth", "data": {"name": "X-API-Key", "value": "xxx"}}
 
-## HTTP Response Codes
-
-| Code | Meaning | Common Causes |
-|------|---------|---------------|
-| 200 | Success | GET, PUT, POST completed |
-| 201 | Created | Resource successfully created |
-| 204 | No Content | DELETE completed |
-| 400 | Bad Request | Invalid parameters, malformed JSON |
-| 401 | Unauthorized | Missing/invalid API key |
-| 403 | Forbidden | Insufficient permissions |
-| 404 | Not Found | Resource doesn't exist |
-| 409 | Conflict | Duplicate name, version conflict |
-| 429 | Too Many Requests | Rate limited |
+// HTTP Basic Auth
+{"type": "httpBasicAuth", "data": {"user": "username", "password": "xxx"}}
+```
 
 ---
 
-## ⛔ Anti-Hallucination: API Endpoints
+## Other Endpoints
 
-### Endpoints That DO NOT Exist
+### Tags
+`POST/GET /tags`, `GET/PUT/DELETE /tags/{id}`
 
-| Hallucinated Endpoint | Reality |
-|-----------------------|---------|
-| `POST /workflows/{id}/execute` | ❌ Does not exist—use webhook triggers |
-| `POST /workflows/{id}/run` | ❌ Does not exist |
-| `GET /workflows/{id}/status` | ❌ Does not exist—check executions |
-| `GET /nodes` | ❌ No API to list available node types |
-| `/api/v2/*` | ❌ Only v1 exists |
-| `PUT /credentials/{id}` | ❌ Credentials cannot be updated via API |
+### Users (Instance Owner Only)
+`GET/POST /users`, `GET/DELETE /users/{id}`, `PATCH /users/{id}/role`
 
-### Correct vs Incorrect Patterns
+**Roles:** `global:owner`, `global:admin`, `global:member`
 
-| ❌ WRONG | ✅ CORRECT |
-|----------|-----------|
-| `Authorization: Bearer KEY` | `X-N8N-API-KEY: KEY` |
-| `/rest/workflows` | `/api/v1/workflows` |
-| `"active": true` in POST body | Use `/activate` endpoint |
-| `nodeId` in connections | `name` (nodes use name) |
+### Variables (Pro/Enterprise)
+`GET/POST /variables`, `PUT/DELETE /variables/{id}`
+
+### Projects (Enterprise)
+`GET/POST /projects`, `PUT/DELETE /projects/{projectId}`
+
+### Source Control
+`POST /source-control/pull` - Pull from connected Git repository
+
+### Audit
+`POST /audit` - Generate security audit report
 
 ---
 
-## Critical Known Issues
+## Known Issues and Gotchas
 
-1. **Webhook registration bug**: Workflows activated via API may not properly register webhooks. Save via UI after API activation.
+### Issue #1: workflowId Type Mismatch (CRITICAL)
+**Problem:** OpenAPI defines `execution.workflowId` as `type: number` but n8n returns STRING.
+**Workaround:** Always treat `workflowId` as string.
 
-2. **workflowId type mismatch**: OpenAPI spec defines `execution.workflowId` as number but API returns alphanumeric strings.
+### Issue #2: Waiting Executions Not Returned
+**Problem:** `GET /executions` does not include `status: waiting`.
+**Status:** Closed as "not planned".
 
-3. **Waiting executions**: `GET /executions` may not return `status: "waiting"` executions.
+### Issue #3: Webhook Registration Fails via API
+**Problem:** Workflows activated via API may not register webhooks.
+**Error:** `404 - The requested webhook is not registered`
+**Workaround:** Save workflow via UI after API deployment.
 
-4. **Encryption key dependency**: Changing `N8N_ENCRYPTION_KEY` invalidates ALL stored credentials.
+### Issue #4: "running" Status Filter Rejected
+**Problem:** Documentation shows "running" as valid but API rejects it.
+**Workaround:** Use only: `canceled`, `error`, `success`, `waiting`.
+
+### Issue #5: No Built-in Rate Limiting
+**Problem:** n8n Public API has NO rate limiting.
+**Workaround:** Implement via reverse proxy.
 
 ---
 
 # PART 2: n8n MCP Server Reference
 
-**Primary Server:** `czlonkowski/n8n-mcp` (MIT license, 12,500+ stars)
+**Repository:** github.com/czlonkowski/n8n-mcp
 **npm Package:** `n8n-mcp`
-**Coverage:** 1,084 nodes (537 core + 547 community), 2,709 templates
+**Coverage:** 1,084 nodes (537 core + 547 community) | 2,709+ templates
+
+## All 20 Tools Quick Reference
+
+| # | Tool | Category | Requires API |
+|---|------|----------|--------------|
+| 1 | `tools_documentation` | Documentation | No |
+| 2 | `search_nodes` | Documentation | No |
+| 3 | `get_node` | Documentation | No |
+| 4 | `validate_node` | Documentation | No |
+| 5 | `validate_workflow` | Documentation | No |
+| 6 | `search_templates` | Documentation | No |
+| 7 | `get_template` | Documentation | No |
+| 8 | `n8n_create_workflow` | Management | Yes |
+| 9 | `n8n_get_workflow` | Management | Yes |
+| 10 | `n8n_update_full_workflow` | Management | Yes |
+| 11 | `n8n_update_partial_workflow` | Management | Yes |
+| 12 | `n8n_delete_workflow` | Management | Yes |
+| 13 | `n8n_list_workflows` | Management | Yes |
+| 14 | `n8n_validate_workflow` | Management | Yes |
+| 15 | `n8n_autofix_workflow` | Management | Yes |
+| 16 | `n8n_test_workflow` | Management | Yes |
+| 17 | `n8n_executions` | Management | Yes |
+| 18 | `n8n_workflow_versions` | Management | Yes |
+| 19 | `n8n_deploy_template` | Management | Yes |
+| 20 | `n8n_health_check` | Management | Yes |
+
+---
 
 ## Configuration
 
 ### Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `MCP_MODE` | No | `stdio` (Claude Desktop) or `http` |
-| `LOG_LEVEL` | No | `error`, `warn`, `info`, `debug` |
-| `DISABLE_CONSOLE_OUTPUT` | No | `true` for clean stdio |
-| `N8N_API_URL` | For management | n8n instance URL |
-| `N8N_API_KEY` | For management | n8n API key |
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `MCP_MODE` | Server mode: `stdio` or `http` | `stdio` | No |
+| `N8N_API_URL` | n8n instance URL | - | For management tools |
+| `N8N_API_KEY` | n8n API key | - | For management tools |
+| `AUTH_TOKEN` | Bearer token for HTTP mode | - | HTTP mode only |
+| `LOG_LEVEL` | `debug`, `info`, `warn`, `error` | `info` | No |
+| `DISABLE_CONSOLE_OUTPUT` | Suppress stdout for stdio | `false` | Recommended |
+| `WEBHOOK_SECURITY_MODE` | `strict`, `moderate`, `disabled` | `strict` | No |
 
 ### Claude Desktop Configuration
 
@@ -262,190 +367,531 @@ All list endpoints use cursor-based pagination.
 
 ---
 
-## Complete Tool Reference (20 Tools)
+## Documentation Tools (1-7)
 
-### Documentation Tools (No API key required)
+### 1. `tools_documentation`
+Get documentation for MCP tools. **ALWAYS call first.**
 
-| Tool | Purpose | Key Parameters |
-|------|---------|----------------|
-| `tools_documentation` | Get help for any MCP tool | `toolName`, `detail` (brief/full) |
-| `search_nodes` | Full-text search across 1,084 nodes | `query` (required), `source`, `limit` |
-| `get_node` | Unified node information | `nodeType` (required), `mode`, `detail` |
-| `validate_node` | Validate node config against schema | `nodeType`, `config` (required) |
-| `validate_workflow` | Complete workflow validation | `workflow` (required), `profile` |
-| `search_templates` | Search 2,709 workflow templates | `searchMode`, `query`, `complexity` |
-| `get_template` | Get complete template JSON | `templateId` (required), `mode` |
+```typescript
+interface Params {
+  toolName?: string;
+  depth?: 'summary' | 'standard' | 'full';
+}
+```
 
-### Management Tools (Require N8N_API_KEY)
+### 2. `search_nodes`
+Full-text search across 1,084 n8n nodes.
 
-| Tool | Purpose | Key Parameters |
-|------|---------|----------------|
-| `n8n_create_workflow` | Create new workflow (inactive) | `name`, `nodes`, `connections` (all required) |
-| `n8n_get_workflow` | Retrieve workflow | `id` (required), `mode` |
-| `n8n_update_full_workflow` | Complete workflow replacement | `id` (required), `nodes`, `connections` |
-| `n8n_update_partial_workflow` | Diff-based incremental updates | `id`, `operations` (required) |
-| `n8n_delete_workflow` | Permanently delete | `id` (required) |
-| `n8n_list_workflows` | List with filtering | `limit`, `active`, `tags` |
-| `n8n_validate_workflow` | Validate by ID | `id` (required) |
-| `n8n_autofix_workflow` | Auto-fix validation errors | `id` (required), `applyFixes` |
-| `n8n_test_workflow` | Trigger execution | `workflowId` (required), `triggerType`, `data` |
-| `n8n_executions` | Manage executions | `action` (get/list/delete), `id` |
-| `n8n_workflow_versions` | Version history/rollback | `mode` (list/get/rollback), `workflowId` |
-| `n8n_deploy_template` | Deploy from n8n.io | `templateId` (required), `autoFix` |
-| `n8n_health_check` | Check API connectivity | (none) |
+```typescript
+interface Params {
+  query: string;           // REQUIRED
+  source?: 'all' | 'core' | 'community' | 'verified';
+  includeExamples?: boolean;
+  limit?: number;          // Default: 20
+}
+```
+
+| Source | Nodes |
+|--------|-------|
+| `all` | 1,084 |
+| `core` | 537 |
+| `community` | 547 |
+| `verified` | 301 |
+
+### 3. `get_node`
+Unified node information with multiple modes.
+
+```typescript
+interface Params {
+  nodeType: string;        // REQUIRED: "n8n-nodes-base.httpRequest"
+  mode?: 'info' | 'docs' | 'search_properties' | 'versions' | 'compare' | 'breaking' | 'migrations';
+  detail?: 'minimal' | 'standard' | 'full';
+  includeExamples?: boolean;
+  propertyQuery?: string;  // For search_properties mode
+}
+```
+
+**Detail Levels:**
+| Level | Tokens | Content |
+|-------|--------|---------|
+| `minimal` | ~200 | Basic metadata only |
+| `standard` | ~500-1000 | Essential properties (10-20) |
+| `full` | ~3000-8000 | Complete with all properties |
+
+### 4. `validate_node`
+Validate node configuration against schema.
+
+```typescript
+interface Params {
+  nodeType: string;        // REQUIRED
+  config: Record<string, any>; // REQUIRED
+  mode?: 'minimal' | 'full';
+  profile?: 'minimal' | 'runtime' | 'ai-friendly' | 'strict';
+}
+
+interface Response {
+  valid: boolean;
+  errors: ValidationIssue[];
+  warnings: ValidationIssue[];
+  suggestions: ValidationIssue[];
+  fixes?: AutoFix[];
+}
+```
+
+### 5. `validate_workflow`
+Complete workflow validation.
+
+```typescript
+interface Params {
+  workflow: {
+    name: string;
+    nodes: WorkflowNode[];
+    connections: ConnectionsObject;
+    settings?: WorkflowSettings;
+  };
+}
+```
+
+**Common Error Codes:**
+| Code | Description |
+|------|-------------|
+| `EMPTY_CONNECTIONS` | Multi-node workflow has no connections |
+| `MISSING_TRIGGER` | No trigger node found |
+| `AI_AGENT_MISSING_LLM` | AI Agent without language model |
+| `INVALID_NODE_REFERENCE` | Expression references non-existent node |
+| `CIRCULAR_DEPENDENCY` | Detected cycle in connections |
+
+### 6. `search_templates`
+Search 2,709+ workflow templates.
+
+```typescript
+interface Params {
+  searchMode?: 'keyword' | 'by_nodes' | 'by_task' | 'by_metadata';
+  query?: string;
+  nodeTypes?: string[];
+  task?: string;           // webhook_processing, slack_integration, ai_agent, etc.
+  complexity?: 'simple' | 'medium' | 'complex';
+  requiredService?: string;
+  targetAudience?: 'developers' | 'marketers' | 'analysts' | 'operations';
+  limit?: number;
+}
+```
+
+### 7. `get_template`
+Retrieve complete workflow template.
+
+```typescript
+interface Params {
+  templateId: number;      // REQUIRED
+  mode?: 'nodes_only' | 'structure' | 'full';
+}
+```
+
+| Mode | Tokens |
+|------|--------|
+| `nodes_only` | ~200 |
+| `structure` | ~500-1000 |
+| `full` | ~2000-5000 |
 
 ---
 
-## Key Tool Details
+## Management Tools (8-20)
 
-### `get_node` Modes
+### 8. `n8n_create_workflow`
+Create new workflow (always INACTIVE).
 
-| Mode | Token Cost | Description |
-|------|------------|-------------|
-| `info` + `minimal` | ~200 | Basic metadata |
-| `info` + `standard` | ~500 | Essential 10-20 properties |
-| `info` + `full` | ~3000-8000 | Complete schema |
-| `docs` | Varies | Human-readable markdown |
-| `search_properties` | Low | Find specific properties |
-| `versions` | Low | List all node versions |
+```typescript
+interface Params {
+  name: string;            // REQUIRED
+  nodes: WorkflowNode[];   // REQUIRED
+  connections: ConnectionsObject; // REQUIRED
+  settings?: WorkflowSettings;
+}
+```
 
-### `n8n_update_partial_workflow` Operation Types
+### 9. `n8n_get_workflow`
+Retrieve workflow with detail control.
 
-**Node Operations:** `addNode`, `removeNode`, `updateNode`, `moveNode`, `enableNode`, `disableNode`
+```typescript
+interface Params {
+  id: string;              // REQUIRED
+  mode?: 'full' | 'details' | 'structure' | 'minimal';
+}
+```
 
-**Connection Operations:** `addConnection`, `removeConnection`, `rewireConnection`, `cleanStaleConnections`, `replaceConnections`
+| Mode | Tokens |
+|------|--------|
+| `minimal` | ~100-200 |
+| `structure` | ~500-1500 |
+| `details` | ~2000-5000 |
+| `full` | ~3000-8000 |
 
-**Metadata Operations:** `updateSettings`, `updateName`, `addTag`, `removeTag`
+### 10. `n8n_update_full_workflow`
+Complete workflow REPLACEMENT.
 
-**State Operations:** `activateWorkflow`, `deactivateWorkflow`
+```typescript
+interface Params {
+  id: string;              // REQUIRED
+  name?: string;
+  nodes?: WorkflowNode[];
+  connections?: ConnectionsObject;
+  settings?: WorkflowSettings;
+  intent?: string;
+}
+```
 
-### `n8n_autofix_workflow` Fix Types
+⚠️ **WARNING:** Omitted nodes/connections are DELETED.
 
-`expression-format`, `typeversion-correction`, `error-output-config`, `node-type-correction`, `webhook-missing-path`, `typeversion-upgrade`, `version-migration`
+### 11. `n8n_update_partial_workflow` ⭐ CRITICAL
 
----
+Incremental workflow updates with **17 operation types**.
 
-## Quick Reference Table
+```typescript
+interface Params {
+  id: string;              // REQUIRED
+  operations: Operation[]; // REQUIRED
+  validateOnly?: boolean;  // Default: false (preview only)
+  continueOnError?: boolean;
+  intent?: string;
+}
+```
 
-| Tool | Category | API Key | Primary Use |
-|------|----------|---------|-------------|
-| `tools_documentation` | Docs | No | Get tool help |
-| `search_nodes` | Docs | No | Find nodes by keyword |
-| `get_node` | Docs | No | Get node details/schema |
-| `validate_node` | Validation | No | Validate node config |
-| `validate_workflow` | Validation | No | Validate workflow JSON |
-| `search_templates` | Docs | No | Find workflow templates |
-| `get_template` | Docs | No | Get template JSON |
-| `n8n_create_workflow` | Mgmt | **Yes** | Create workflow |
-| `n8n_get_workflow` | Mgmt | **Yes** | Fetch workflow |
-| `n8n_update_full_workflow` | Mgmt | **Yes** | Replace workflow |
-| `n8n_update_partial_workflow` | Mgmt | **Yes** | Diff-based updates |
-| `n8n_delete_workflow` | Mgmt | **Yes** | Delete workflow |
-| `n8n_list_workflows` | Mgmt | **Yes** | List workflows |
-| `n8n_validate_workflow` | Mgmt | **Yes** | Validate by ID |
-| `n8n_autofix_workflow` | Mgmt | **Yes** | Auto-fix errors |
-| `n8n_test_workflow` | Exec | **Yes** | Trigger execution |
-| `n8n_executions` | Exec | **Yes** | Manage executions |
-| `n8n_workflow_versions` | Mgmt | **Yes** | Version control |
-| `n8n_deploy_template` | Mgmt | **Yes** | Deploy templates |
-| `n8n_health_check` | System | **Yes** | Check connectivity |
+#### All 17 Operation Types
 
----
+**Node Operations:**
+```typescript
+// 1. addNode
+{ type: "addNode", node: { name, type, position?, parameters?, typeVersion?, credentials?, disabled? } }
 
-## ⛔ Anti-Hallucination: MCP Tools
+// 2. removeNode
+{ type: "removeNode", nodeName: string }
 
-### Tools That DO NOT Exist
+// 3. updateNode (dot notation for changes)
+{ type: "updateNode", nodeName: string, changes: { "parameters.url": "https://...", "parameters.method": "POST" } }
 
-| Hallucinated Tool | Use Instead |
-|-------------------|-------------|
-| `execute_workflow` | `n8n_test_workflow` |
-| `get_nodes` | `search_nodes` |
-| `get_credentials` | Limited operations only |
-| `create_node` | Create workflow with nodes array |
-| `update_node` | `n8n_update_partial_workflow` |
-| `list_nodes` | `search_nodes` with broad query |
-| `run_workflow` | `n8n_test_workflow` |
+// 4. moveNode
+{ type: "moveNode", nodeName: string, position: [x, y] }
 
-### Common Parameter Mistakes
+// 5. enableNode
+{ type: "enableNode", nodeName: string }
 
-| ❌ Wrong | ✅ Correct | Tool |
-|----------|-----------|------|
-| `name` | `nodeType` | get_node |
-| `workflow_id` | `workflowId` | n8n_test_workflow |
-| `workflow` | `id` | n8n_get_workflow |
-| `"Slack"` | `"n8n-nodes-base.slack"` | get_node nodeType |
-| `mode: "run"` | `action: "get"` | n8n_executions |
+// 6. disableNode
+{ type: "disableNode", nodeName: string }
+```
 
-### Node Type Format
+**Connection Operations:**
+```typescript
+// 7. addConnection
+{ type: "addConnection", source: string, target: string, sourceOutput?: string, targetInput?: string, branch?: "true" | "false" }
 
-```json
-// ❌ WRONG
-{"tool": "get_node", "nodeType": "Slack"}
-{"tool": "get_node", "nodeType": "slack"}
+// 8. removeConnection
+{ type: "removeConnection", source: string, target: string, sourceOutput?: string, targetInput?: string }
 
-// ✅ CORRECT - Always include package prefix
-{"tool": "get_node", "nodeType": "n8n-nodes-base.slack"}
-{"tool": "get_node", "nodeType": "@n8n/n8n-nodes-langchain.agent"}
+// 9. rewireConnection
+{ type: "rewireConnection", source: string, oldTarget: string, newTarget: string }
+
+// 10. cleanStaleConnections
+{ type: "cleanStaleConnections" }
+
+// 11. replaceConnections
+{ type: "replaceConnections", connections: ConnectionsObject }
+```
+
+**Metadata Operations:**
+```typescript
+// 12. updateSettings
+{ type: "updateSettings", settings: Partial<WorkflowSettings> }
+
+// 13. updateName
+{ type: "updateName", name: string }
+
+// 14. addTag
+{ type: "addTag", tag: string }
+
+// 15. removeTag
+{ type: "removeTag", tag: string }
+```
+
+**State Operations:**
+```typescript
+// 16. activateWorkflow
+{ type: "activateWorkflow" }
+
+// 17. deactivateWorkflow
+{ type: "deactivateWorkflow" }
+```
+
+**IF Node Routing:**
+```typescript
+// TRUE branch
+{ type: "addConnection", source: "IF", target: "Success", branch: "true" }
+// FALSE branch
+{ type: "addConnection", source: "IF", target: "Failure", branch: "false" }
+```
+
+**AI Node Connections:**
+```typescript
+// Language Model
+{ type: "addConnection", source: "OpenAI Chat", target: "AI Agent", sourceOutput: "ai_languageModel" }
+// Tool
+{ type: "addConnection", source: "HTTP Tool", target: "AI Agent", sourceOutput: "ai_tool" }
+// Memory
+{ type: "addConnection", source: "Memory", target: "AI Agent", sourceOutput: "ai_memory" }
+```
+
+### 12. `n8n_delete_workflow`
+⚠️ PERMANENTLY deletes workflow and ALL execution history.
+
+```typescript
+interface Params { id: string }
+```
+
+### 13. `n8n_list_workflows`
+
+```typescript
+interface Params {
+  limit?: number;          // Default: 100, Max: 100
+  cursor?: string;
+  active?: boolean;
+  tags?: string[];         // AND logic
+  projectId?: string;
+}
+```
+
+### 14. `n8n_validate_workflow`
+Validate deployed workflow by ID.
+
+```typescript
+interface Params {
+  id: string;              // REQUIRED
+  options?: {
+    profile?: 'minimal' | 'runtime' | 'ai-friendly' | 'strict';
+    checkCredentials?: boolean;
+    checkExpressions?: boolean;
+    checkConnections?: boolean;
+  };
+}
+```
+
+### 15. `n8n_autofix_workflow`
+Automatically fix common validation errors.
+
+```typescript
+interface Params {
+  id: string;              // REQUIRED
+  applyFixes?: boolean;    // Default: false (preview only)
+  fixTypes?: FixType[];
+  confidenceThreshold?: 'high' | 'medium' | 'low';
+  maxFixes?: number;       // Default: 50
+}
+
+type FixType =
+  | 'expression-format'
+  | 'typeversion-correction'
+  | 'error-output-config'
+  | 'node-type-correction'
+  | 'webhook-missing-path'
+  | 'typeversion-upgrade'
+  | 'version-migration';
+```
+
+**Confidence Levels:**
+| Level | Certainty | Use Case |
+|-------|-----------|----------|
+| `high` | 95%+ | Production (safest) |
+| `medium` | 80%+ | Balanced (default) |
+| `low` | All | Aggressive (review carefully) |
+
+### 16. `n8n_test_workflow`
+Trigger workflow execution.
+
+```typescript
+interface Params {
+  workflowId: string;      // REQUIRED
+  triggerType?: 'webhook' | 'form' | 'chat' | 'auto';
+  httpMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  webhookPath?: string;
+  message?: string;        // For chat triggers
+  sessionId?: string;
+  data?: Record<string, any>;
+  headers?: Record<string, string>;
+  timeout?: number;        // Default: 120000 (2 min)
+  waitForResponse?: boolean;
+}
+```
+
+⚠️ Workflow MUST be ACTIVE to be triggered.
+
+### 17. `n8n_executions`
+Unified execution management.
+
+```typescript
+interface Params {
+  action: 'get' | 'list' | 'delete';
+  id?: string;             // For get/delete
+  mode?: 'preview' | 'summary' | 'filtered' | 'full';
+  nodeNames?: string[];    // For filtered mode
+  itemsLimit?: number;     // For filtered (default: 2)
+  workflowId?: string;     // For list
+  status?: 'success' | 'error' | 'waiting';
+  limit?: number;
+  cursor?: string;
+}
+```
+
+### 18. `n8n_workflow_versions`
+Version history and rollback.
+
+```typescript
+interface Params {
+  mode: 'list' | 'get' | 'rollback' | 'delete' | 'prune' | 'truncate';
+  workflowId?: string;
+  versionId?: number;
+  limit?: number;
+  validateBefore?: boolean;  // For rollback (default: true)
+  deleteAll?: boolean;       // For delete
+  maxVersions?: number;      // For prune (default: 10)
+  confirmTruncate?: boolean; // For truncate (REQUIRED: true)
+}
+```
+
+### 19. `n8n_deploy_template`
+Deploy template from n8n.io with auto-fixing.
+
+```typescript
+interface Params {
+  templateId: number;      // REQUIRED
+  name?: string;
+  autoUpgradeVersions?: boolean; // Default: true
+  autoFix?: boolean;       // Default: true
+  stripCredentials?: boolean; // Default: true
+}
+
+interface Response {
+  success: boolean;
+  workflowId: string;
+  active: false;           // Always inactive
+  requiredCredentials: Array<{ nodeType, credentialType, nodeName }>;
+  fixes: Array<{ type, description, applied }>;
+  upgrades: Array<{ nodeName, oldVersion, newVersion }>;
+}
+```
+
+### 20. `n8n_health_check`
+Check n8n connectivity.
+
+```typescript
+interface Response {
+  status: 'healthy' | 'unhealthy' | 'degraded';
+  n8n: { connected, apiVersion, baseUrl, responseTime };
+  mcp: { version, mode, features: { workflowManagement, templateLibrary, nodeValidation } };
+  checks: { apiKey, apiAccess, workflows, executions };
+}
 ```
 
 ---
 
-## Common Error Codes
+## Error Handling
 
-### MCP Connection Errors
+### MCP Protocol Error Codes (JSON-RPC 2.0)
+| Code | Meaning |
+|------|---------|
+| `-32700` | Parse error |
+| `-32600` | Invalid Request |
+| `-32601` | Method not found |
+| `-32602` | Invalid params |
+| `-32603` | Internal error |
 
+### Common Errors
 | Error | Cause | Solution |
 |-------|-------|----------|
-| `AUTHENTICATION_ERROR` | Invalid API key | Verify `N8N_API_KEY` |
-| `Error 1001 (Status: 403)` | Permission denied | Check key scopes |
-| `Cannot connect to MCP server` | Protocol mismatch | Verify `MCP_MODE` setting |
-| `Failed to initialize` | Missing dependencies | Run `npm install` |
-
-### API-Related Errors
-
-| Error | Cause | Solution |
-|-------|-------|----------|
-| 401 Unauthorized | Wrong header | Use `X-N8N-API-KEY` |
-| 404 Not Found | Wrong URL | Include `/api/v1` prefix |
-| Webhook 404 | Registration bug | Save workflow in UI |
-| Empty execution data | Waiting status | Known limitation |
+| `Could not connect to MCP server` | Connection failure | Check URL, auth, network |
+| `Unexpected token...` | JSON parsing in stdio | Set `DISABLE_CONSOLE_OUTPUT=true` |
+| `N8N_API_TOKEN not configured` | Missing API key | Set `N8N_API_KEY` env var |
 
 ---
 
-## Alternative MCP Servers
+## Token Cost Estimates
 
-### leonardsellem/n8n-mcp-server
-
-Simpler alternative (12 tools):
-
-| Tool | Description |
-|------|-------------|
-| `workflow_list` | List workflows |
-| `workflow_get` | Get workflow |
-| `workflow_create` | Create workflow |
-| `workflow_update` | Update workflow |
-| `workflow_delete` | Delete workflow |
-| `workflow_activate` | Activate workflow |
-| `workflow_deactivate` | Deactivate workflow |
-| `execution_run` | Run execution |
-| `run_webhook` | Trigger webhook |
-| `execution_get` | Get execution |
-| `execution_list` | List executions |
-| `execution_stop` | Stop execution |
+| Operation | Tokens |
+|-----------|--------|
+| `get_node({ detail: 'minimal' })` | ~200 |
+| `get_node({ detail: 'standard' })` | ~500-1000 |
+| `get_node({ detail: 'full' })` | ~3000-8000 |
+| `search_nodes()` (20 results) | ~2000 |
+| `get_template({ mode: 'nodes_only' })` | ~200 |
+| `get_template({ mode: 'full' })` | ~2000-5000 |
+| `n8n_get_workflow({ mode: 'minimal' })` | ~100-200 |
+| `n8n_get_workflow({ mode: 'full' })` | ~3000-8000 |
 
 ---
 
-## Key Gotchas
+## Best Practices Workflow
 
-1. **API auth is `X-N8N-API-KEY`** - NOT Bearer tokens
-2. **No `/api/v2`** - Only v1 exists
-3. **No `PUT /credentials/{id}`** - Credentials cannot be updated via API
-4. **No `POST /workflows/{id}/execute`** - Use webhook triggers or MCP `n8n_test_workflow`
-5. **Workflows created via API are inactive** - Must activate separately
-6. **Webhook registration bug** - Save workflow in UI after API activation
-7. **nodeType must include package prefix** - `n8n-nodes-base.slack`, not `Slack`
-8. **`waiting` status may not return** - Known API limitation
+1. `tools_documentation()` - Understand capabilities
+2. `search_templates()` - Check 2,709 templates first
+3. `search_nodes({ includeExamples: true })` - If no template fits
+4. `get_node({ detail: 'standard' })` - Get essential properties
+5. `validate_node({ mode: 'minimal' })` - Quick check (<100ms)
+6. `validate_node({ mode: 'full', profile: 'runtime' })` - Full validation
+7. Build workflow with validated configs
+8. `validate_workflow()` - Complete workflow validation
+9. `n8n_create_workflow()` - Create in n8n
+10. `n8n_validate_workflow()` - Post-deployment validation
+11. `n8n_autofix_workflow()` - Auto-fix issues
+12. Activate: `n8n_update_partial_workflow({ operations: [{ type: "activateWorkflow" }] })`
+13. `n8n_test_workflow()` - Test execution
+
+### Batch Operations (Efficient)
+```typescript
+// ✅ GOOD - Single call with multiple operations
+n8n_update_partial_workflow({
+  id: "wf-123",
+  operations: [
+    { type: "updateNode", nodeName: "A", changes: {...} },
+    { type: "updateNode", nodeName: "B", changes: {...} },
+    { type: "addConnection", source: "A", target: "B" },
+    { type: "cleanStaleConnections" }
+  ]
+})
+
+// ❌ BAD - Multiple separate calls
+n8n_update_partial_workflow({ id: "wf-123", operations: [...] })
+n8n_update_partial_workflow({ id: "wf-123", operations: [...] })
+```
 
 ---
 
-**Source Document:** `/Users/yourusername/My Drive/GTM Machine content/Research & Strategy/Claude Code Skill Reference- n8n API & MCP Server.md`
+## Anti-Hallucination Section
+
+### API - DO NOT assume:
+- ❌ Rate limiting exists - it does NOT
+- ❌ workflowId is a number - it's a STRING
+- ❌ "running" status filter works - it does NOT
+- ❌ API automatically registers webhooks - it may NOT
+- ❌ Credential data is returned - only metadata is returned
+- ❌ Delete operations can be undone - they are PERMANENT
+
+### MCP - DO NOT assume:
+- ❌ Management tools work without `N8N_API_URL` and `N8N_API_KEY`
+- ❌ Created workflows are active - they are ALWAYS inactive
+- ❌ `n8n_update_full_workflow` merges changes - it REPLACES everything
+- ❌ Workflows can be triggered when inactive - they MUST be active
+- ❌ All 20 tools require API config - 7 documentation tools work standalone
+
+### Node Type Format:
+- Search tools: `nodes-base.httpRequest` or `n8n-nodes-base.httpRequest`
+- Workflow tools: ALWAYS `n8n-nodes-base.httpRequest`
+- LangChain: `@n8n/n8n-nodes-langchain.lmChatOpenAi`
+
+### ALWAYS verify:
+- ✅ Use `n8n_health_check` to verify connectivity first
+- ✅ Use `validateOnly: true` to preview partial updates
+- ✅ Activate workflow before `n8n_test_workflow`
+- ✅ Use full node type names with package prefix
+- ✅ Include `typeVersion` when creating nodes
+- ✅ Use `branch: "true"/"false"` for IF node connections
+
+---
+
+**Source Document:** `/Users/mikeboscia/My Drive/GTM Machine content/Research & Strategy/n8n REST API and MCP Server - Exhaustive Skill Reference Documentation.md`
