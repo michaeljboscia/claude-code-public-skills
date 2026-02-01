@@ -235,7 +235,7 @@ interface Execution {
 
 ```json
 // GitHub API
-{"type": "githubApi", "data": {"accessToken": "your-github-pat"}}
+{"type": "githubApi", "data": {"accessToken": "ghp_xxx"}}
 
 // Slack API
 {"type": "slackApi", "data": {"accessToken": "xoxb-xxx"}}
@@ -894,4 +894,4 @@ n8n_update_partial_workflow({ id: "wf-123", operations: [...] })
 
 ---
 
-**Source Document:** `/Users/mikeboscia/My Drive/GTM Machine content/Research & Strategy/n8n REST API and MCP Server - Exhaustive Skill Reference Documentation.md`
+*This skill is self-contained. See related skills in this repo for additional n8n documentation.*
