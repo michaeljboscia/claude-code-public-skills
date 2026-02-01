@@ -894,6 +894,8 @@ n8n_update_partial_workflow({ id: "wf-123", operations: [...] })
 - ❌ Management tools work without `N8N_API_URL` and `N8N_API_KEY`
 - ❌ Created workflows are active - they are ALWAYS inactive
 - ❌ `n8n_update_full_workflow` merges changes - it REPLACES everything
+- ❌ `n8n_update_partial_workflow` merges `parameters` - it REPLACES them (name is misleading!)
+- ❌ `updateNode` with `changes: {parameters: {...}}` is smart - it will DELETE unlisted params
 - ❌ Workflows can be triggered when inactive - they MUST be active
 - ❌ All 20 tools require API config - 7 documentation tools work standalone
 
