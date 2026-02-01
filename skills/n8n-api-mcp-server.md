@@ -448,4 +448,4 @@ Simpler alternative (12 tools):
 
 ---
 
-**Source Document:** `/Users/mikeboscia/My Drive/GTM Machine content/Research & Strategy/Claude Code Skill Reference- n8n API & MCP Server.md`
+**Source Document:** `/Users/yourusername/My Drive/GTM Machine content/Research & Strategy/Claude Code Skill Reference- n8n API & MCP Server.md`
