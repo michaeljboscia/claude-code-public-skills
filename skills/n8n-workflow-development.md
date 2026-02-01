@@ -17,9 +17,9 @@ shareable: true
 When building or troubleshooting n8n workflows, follow this lookup order:
 
 1. **THIS SKILL FILE** - Quick reference for common patterns
-2. **LOCAL DOCUMENTATION** - Comprehensive technical references:
-   - `/Users/yourusername/My Drive/GTM Machine content/n8n docs/n8n-node-implementation-reference-v2.md`
-   - `/Users/yourusername/My Drive/GTM Machine content/n8n docs/n8n Workflow Automation Platform- Complete Technical Reference.md`
+2. **REPO DOCUMENTATION** - Comprehensive technical references (in this repo):
+   - `../docs/n8n/n8n-node-implementation-reference-v2.md`
+   - `../docs/n8n/n8n-workflow-automation-platform--complete-technical-reference.md`
 3. **LIVE n8n DOCS** - Official documentation:
    - https://docs.n8n.io/integrations/builtin/core-nodes/
    - https://docs.n8n.io/code/
@@ -98,7 +98,7 @@ The n8n API performs **looser validation** than the UI. The API will accept work
 
 ### Reference Documentation
 
-See: `/Users/yourusername/My Drive/GTM Machine content/n8n/n8n-workflow-api-antipattern-spec.md` for complete technical analysis.
+See: `../docs/n8n/n8n-workflow-api-antipattern-spec.md` for complete technical analysis.
 
 ---
 
@@ -1052,8 +1052,8 @@ return items;
 
 ## Related Documentation
 
-- **Local Node Implementation Reference:** `/Users/yourusername/My Drive/GTM Machine content/n8n docs/n8n-node-implementation-reference-v2.md`
-- **Local Complete Technical Reference:** `/Users/yourusername/My Drive/GTM Machine content/n8n docs/n8n Workflow Automation Platform- Complete Technical Reference.md`
+- **Node Implementation Reference:** `../docs/n8n/n8n-node-implementation-reference-v2.md`
+- **Complete Technical Reference:** `../docs/n8n/n8n-workflow-automation-platform--complete-technical-reference.md`
 - **Live n8n Docs:** https://docs.n8n.io/
 - **n8n Troubleshooting Skill:** `~/.claude/skills/n8n-troubleshooting.md`
 

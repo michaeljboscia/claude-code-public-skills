@@ -64,8 +64,9 @@ Fast, automated backups of n8n Cloud workflows before making changes. Prevents c
 
 **Backup Directory:**
 ```
-~/your-drive-folder/Outbound content pipeline/backups/
+~/your-backup-directory/
 ```
+*(Configure BACKUP_DIR in the script to your preferred location)*
 
 **File Naming Convention:**
 ```
@@ -118,7 +119,7 @@ rm ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Old_Wor
 
 ```bash
 # Read backup file and import
-BACKUP_FILE="~/your-drive-folder/Outbound content pipeline/backups/Workflow_Name-backup-2026-01-24.json"
+BACKUP_FILE="~/your-backup-directory/Workflow_Name-backup-2026-01-24.json"
 
 curl -X POST "https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows" \
   -H "X-N8N-API-KEY: YOUR-API-KEY" \

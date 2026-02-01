@@ -300,7 +300,7 @@ If `reply_text` contains `"Hello\nHow are you?"` the JSON becomes invalid.
 
 **What to Backup:**
 - Export workflow JSON via n8n API or UI
-- Save to: `~/your-drive-folder/[project]/backups/[workflow-name]-backup-YYYY-MM-DD.json`
+- Save to: `~/your-backup-directory/[workflow-name]-backup-YYYY-MM-DD.json`
 - Include date and "before what" in filename
 
 **Why:**
@@ -579,9 +579,9 @@ const singleRecord = $('Previous Node').first().json;
 
 ## Related Skills
 
-- `/Users/yourusername/.claude/skills/n8n-mcp.md` - n8n MCP tool usage
-- `/Users/yourusername/.claude/skills/supabase-integration.md` - Supabase patterns
-- `/Users/yourusername/.claude/infrastructure.md` - n8n infrastructure details
+- `n8n-workflow-development.md` - Comprehensive node/expression reference
+- `n8n-troubleshooting.md` - MCP connection diagnostics
+- Your local infrastructure configuration
 
 ---
 
