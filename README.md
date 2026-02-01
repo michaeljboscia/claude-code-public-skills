@@ -41,7 +41,14 @@ This repository contains battle-tested patterns, protocols, and skills developed
 **Total Skills:** *Auto-generated catalog will appear here*
 
 <!-- BEGIN AUTO-GENERATED CATALOG -->
-*No shareable skills published yet. Skills will appear here once marked with `shareable: true` in frontmatter.*
+### Available Skills (3 total)
+
+#### [n8n-troubleshooting](skills/n8n-troubleshooting.md)
+
+#### [n8n-workflow-backup](skills/n8n-workflow-backup.md)
+
+#### [n8n-workflow-development](skills/n8n-workflow-development.md)
+
 <!-- END AUTO-GENERATED CATALOG -->
 
 ---
@@ -199,4 +206,4 @@ MIT License - See [LICENSE](LICENSE) for details
 
 ---
 
-**Last Updated:** 2026-01-31 19:49:25 EST
+**Last Updated:** 2026-01-31 19:54:05 EST
