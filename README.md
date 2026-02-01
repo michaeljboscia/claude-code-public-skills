@@ -41,7 +41,9 @@ This repository contains battle-tested patterns, protocols, and skills developed
 **Total Skills:** *Auto-generated catalog will appear here*
 
 <!-- BEGIN AUTO-GENERATED CATALOG -->
-### Available Skills (6 total)
+### Available Skills (7 total)
+
+#### [n8n-api-mcp-server](skills/n8n-api-mcp-server.md)
 
 #### [n8n-node-implementation](skills/n8n-node-implementation.md)
 
@@ -212,4 +214,4 @@ MIT License - See [LICENSE](LICENSE) for details
 
 ---
 
-**Last Updated:** 2026-01-31 20:33:44 EST
+**Last Updated:** 2026-01-31 20:33:46 EST
