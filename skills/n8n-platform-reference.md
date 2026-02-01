@@ -475,4 +475,4 @@ PostgreSQL, MySQL, Supabase, Google Drive, Google Sheets, Gmail, Slack, HubSpot,
 
 ---
 
-**Reference:** See `../docs/n8n/n8n-workflow-automation-platform--complete-technical-reference.md` for complete platform documentation.
+**Source Document:** `/Users/mikeboscia/My Drive/GTM Machine content/Research & Strategy/n8n Workflow Automation Platform- Complete Technical Reference.md`

@@ -17,9 +17,9 @@ shareable: true
 When building or troubleshooting n8n workflows, follow this lookup order:
 
 1. **THIS SKILL FILE** - Quick reference for common patterns
-2. **INCLUDED DOCUMENTATION** - Comprehensive technical references:
-   - `../docs/n8n/n8n-node-implementation-reference-v2.md`
-   - `../docs/n8n/n8n-workflow-automation-platform--complete-technical-reference.md`
+2. **LOCAL DOCUMENTATION** - Comprehensive technical references:
+   - `/Users/mikeboscia/My Drive/GTM Machine content/n8n docs/n8n-node-implementation-reference-v2.md`
+   - `/Users/mikeboscia/My Drive/GTM Machine content/n8n docs/n8n Workflow Automation Platform- Complete Technical Reference.md`
 3. **LIVE n8n DOCS** - Official documentation:
    - https://docs.n8n.io/integrations/builtin/core-nodes/
    - https://docs.n8n.io/code/
@@ -98,13 +98,11 @@ The n8n API performs **looser validation** than the UI. The API will accept work
 
 ### Reference Documentation
 
-See: `../docs/n8n/n8n-workflow-api-antipattern-spec.md` for complete technical analysis.
+See: `/Users/mikeboscia/My Drive/GTM Machine content/n8n/n8n-workflow-api-antipattern-spec.md` for complete technical analysis.
 
 ---
 
 ## ⛔ CRITICAL: typeVersion Reference ⛔
-
-**Last verified: January 2026 (n8n Cloud)** — typeVersions change with n8n updates. When in doubt, create a node in the UI and export to see current versions.
 
 **STOP. Every node MUST use these exact typeVersion values. Using outdated versions causes silent failures.**
 
@@ -1054,8 +1052,8 @@ return items;
 
 ## Related Documentation
 
-- **Node Implementation Reference:** `../docs/n8n/n8n-node-implementation-reference-v2.md`
-- **Complete Technical Reference:** `../docs/n8n/n8n-workflow-automation-platform--complete-technical-reference.md`
+- **Local Node Implementation Reference:** `/Users/mikeboscia/My Drive/GTM Machine content/n8n docs/n8n-node-implementation-reference-v2.md`
+- **Local Complete Technical Reference:** `/Users/mikeboscia/My Drive/GTM Machine content/n8n docs/n8n Workflow Automation Platform- Complete Technical Reference.md`
 - **Live n8n Docs:** https://docs.n8n.io/
 - **n8n Troubleshooting Skill:** `~/.claude/skills/n8n-troubleshooting.md`
 

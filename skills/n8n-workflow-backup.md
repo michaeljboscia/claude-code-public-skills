@@ -64,7 +64,7 @@ Fast, automated backups of n8n Cloud workflows before making changes. Prevents c
 
 **Backup Directory:**
 ```
-~/your-backup-folder/n8n-backups/
+~/My Drive/GTM Machine content/Outbound content pipeline/backups/
 ```
 
 **File Naming Convention:**
@@ -96,10 +96,10 @@ Fast, automated backups of n8n Cloud workflows before making changes. Prevents c
 **Manual Cleanup (if needed):**
 ```bash
 # See all backups
-ls -lh ~/your-backup-folder/n8n-backups/
+ls -lh ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/
 
 # Delete specific old backup
-rm ~/your-backup-folder/n8n-backups/Old_Workflow-backup-2025-12-01.json
+rm ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Old_Workflow-backup-2025-12-01.json
 ```
 
 ---
@@ -108,7 +108,7 @@ rm ~/your-backup-folder/n8n-backups/Old_Workflow-backup-2025-12-01.json
 
 ### Option 1: n8n Cloud UI (Easiest)
 
-1. Go to https://your-n8n-cloud.app.n8n.cloud
+1. Go to https://binaryanvil.app.n8n.cloud
 2. Click "+" (Add Workflow)
 3. Click "Import from File"
 4. Select backup JSON file from backups directory
@@ -118,10 +118,10 @@ rm ~/your-backup-folder/n8n-backups/Old_Workflow-backup-2025-12-01.json
 
 ```bash
 # Read backup file and import
-BACKUP_FILE="~/your-backup-folder/n8n-backups/Workflow_Name-backup-2026-01-24.json"
+BACKUP_FILE="~/My Drive/GTM Machine content/Outbound content pipeline/backups/Workflow_Name-backup-2026-01-24.json"
 
-curl -X POST "https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows" \
-  -H "X-N8N-API-KEY: YOUR_N8N_API_KEY" \
+curl -X POST "https://binaryanvil.app.n8n.cloud/api/v1/workflows" \
+  -H "X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZTU1NjRmZS04MmM3LTQ0YmItYTdiZC04ZWNiYzVlNWE2YzAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwMTEzMDM0fQ.AxUds30wNvyexxzVQnvCOcPvXpEkCSTCG9PRKLT7N0E" \
   -H "Content-Type: application/json" \
   -d @"$BACKUP_FILE"
 ```
@@ -130,7 +130,7 @@ curl -X POST "https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows" \
 
 ```bash
 # Read backup file
-cat ~/your-backup-folder/n8n-backups/Workflow_Name-backup-2026-01-24.json
+cat ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Workflow_Name-backup-2026-01-24.json
 
 # Use mcp__n8n-cloud__n8n_create_workflow with the backup JSON
 ```
@@ -150,7 +150,7 @@ cat ~/your-backup-folder/n8n-backups/Workflow_Name-backup-2026-01-24.json
 **Cause:** API connection issue or invalid API key
 
 **Fix:**
-1. Verify n8n Cloud is accessible: `curl -I https://your-n8n-cloud.app.n8n.cloud`
+1. Verify n8n Cloud is accessible: `curl -I https://binaryanvil.app.n8n.cloud`
 2. Check API key in script matches `~/.claude.json` (line 401)
 3. Verify MCP server is configured: `claude mcp get n8n-cloud`
 
@@ -161,7 +161,7 @@ cat ~/your-backup-folder/n8n-backups/Workflow_Name-backup-2026-01-24.json
 **Fix:**
 1. List all workflows to see exact names:
    ```bash
-   curl -s "https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows" \
+   curl -s "https://binaryanvil.app.n8n.cloud/api/v1/workflows" \
      -H "X-N8N-API-KEY: ..." | jq -r '.data[].name'
    ```
 2. Copy exact workflow name (including spaces, capitalization)
@@ -174,7 +174,7 @@ cat ~/your-backup-folder/n8n-backups/Workflow_Name-backup-2026-01-24.json
 **Not an error!** Script skips duplicate backups to save time. If you need to force a new backup:
 ```bash
 # Delete today's backup first
-rm ~/your-backup-folder/n8n-backups/Workflow_Name-backup-$(TZ='America/New_York' date +%Y-%m-%d).json
+rm ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Workflow_Name-backup-$(TZ='America/New_York' date +%Y-%m-%d).json
 
 # Re-run backup
 ~/scripts/backup-n8n-workflows.sh "Workflow Name"
@@ -247,8 +247,8 @@ rm ~/your-backup-folder/n8n-backups/Workflow_Name-backup-$(TZ='America/New_York'
 
 **Configurable Variables (edit script if needed):**
 ```bash
-N8N_API_URL="https://your-n8n-cloud.app.n8n.cloud"
-BACKUP_DIR="$HOME/your-backup-folder/n8n-backups"
+N8N_API_URL="https://binaryanvil.app.n8n.cloud"
+BACKUP_DIR="$HOME/My Drive/GTM Machine content/Outbound content pipeline/backups"
 RETENTION_DAYS=7        # How many days to keep backups
 PARALLEL_JOBS=10        # How many workflows to backup in parallel (--full mode)
 ```
@@ -259,7 +259,7 @@ PARALLEL_JOBS=10        # How many workflows to backup in parallel (--full mode)
 
 ## Related Documentation
 
-- **n8n Cloud Instance:** https://your-n8n-cloud.app.n8n.cloud
+- **n8n Cloud Instance:** https://binaryanvil.app.n8n.cloud
 - **n8n API Docs:** https://docs.n8n.io/api/
 - **MCP Configuration:** `~/.claude/data-locations.md` (n8n section)
 - **Workflow Development:** `~/.claude/skills/n8n-workflow-development-lessons.md`
@@ -276,10 +276,10 @@ PARALLEL_JOBS=10        # How many workflows to backup in parallel (--full mode)
 ~/scripts/backup-n8n-workflows.sh --full
 
 # Check backup worked
-ls -lht ~/your-backup-folder/n8n-backups/ | head
+ls -lht ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/ | head
 
 # View backup contents
-cat ~/your-backup-folder/n8n-backups/Workflow_Name-backup-2026-01-24.json | jq .
+cat ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Workflow_Name-backup-2026-01-24.json | jq .
 
 # Restore from backup
 # Use n8n Cloud UI: Import from File
