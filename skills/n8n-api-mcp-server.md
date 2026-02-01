@@ -544,6 +544,24 @@ interface Params {
 
 ### 11. `n8n_update_partial_workflow` ⭐ CRITICAL
 
+> ⚠️ **IRON LAW: The n8n API only supports PUT (full replacement), not PATCH (partial merge).**
+>
+> **The name "partial" is MISLEADING.** This tool does NOT merge your changes with existing data.
+>
+> When using `updateNode` with `changes: { parameters: {...} }`:
+> - ❌ WRONG assumption: "I'll send just the fields I want to change"
+> - ✅ REALITY: The entire `parameters` object gets REPLACED
+> - ⚠️ Parameters you don't include will be DELETED
+>
+> **Safe Pattern:**
+> 1. `n8n_get_workflow()` - Get complete workflow with all node parameters
+> 2. Extract the node's current `parameters` object
+> 3. Modify only the specific field(s) you need
+> 4. Send the COMPLETE parameters object back
+> 5. Verify critical fields survived
+>
+> **Incident 2026-02-01:** Attempt to update just `jsonBody` on an HTTP node wiped `method`, `url`, `headers`, and `timeout`. Only workflow backup prevented production breakage.
+
 Incremental workflow updates with **17 operation types**.
 
 ```typescript
