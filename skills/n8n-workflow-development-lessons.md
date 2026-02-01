@@ -6,7 +6,7 @@ shareable: true
 
 # n8n Workflow Development: Lessons Learned
 **Last Updated:** 2026-01-26
-**Context:** Sequence-to-Queue System Migration (Phases 1 & 2), PSI Diagnostic Workflows Bug Fix, Instantly-HubSpot Engagements Integration
+**Context:** Real production projects with complex integrations
 
 ---
 
@@ -123,7 +123,7 @@ Extract Data → Create Sequence → Parse Multi-Touch → Insert Queue
 
 ### 4. Verify External Property Names Before Building Workflows
 
-**Problem:** Used `ba_content_draft_url` when actual HubSpot property was `ba_sequence_google_doc_url`.
+**Problem:** Used `your_property_name` when actual HubSpot property was `correct_property_name`.
 
 **Prevention:**
 1. Query HubSpot API for object properties first
@@ -214,7 +214,7 @@ WHERE score IS NOT NULL;
 ### 6. JSON.stringify() is Mandatory for User-Generated Content in HTTP Request Nodes
 
 **Date Discovered:** 2026-01-26
-**Affected Workflow:** Instantly to HubSpot - Webhook Handler
+**Affected Workflow:** External Service Webhook Handler
 
 **Problem:** User-generated content (reply text, email bodies) contains quotes, newlines, and special characters that break JSON templates.
 
@@ -385,7 +385,7 @@ curl https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows/WORKFLOW_ID \
 
 **Example Scratch Log:**
 ```
-2026-01-23 14:30 - Changed ba_content_draft_url to ba_sequence_google_doc_url
+2026-01-23 14:30 - Changed your_property_name to correct_property_name
   Why: Field not found error, checked HubSpot properties, found correct name
 
 2026-01-23 14:45 - Replaced HTTP Request with Code node for Create Sequence

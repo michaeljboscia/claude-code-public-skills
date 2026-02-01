@@ -1060,4 +1060,4 @@ return items;
 ---
 
 *Last updated: 2026-01-19*
-*Source documents: n8n-node-implementation-reference-v2.md, n8n Workflow Automation Platform- Complete Technical Reference.md, Outreach Orchestrator testing 2026-01-19*
+*Source documents: n8n-node-implementation-reference-v2.md, n8n Workflow Automation Platform- Complete Technical Reference.md, Production workflow testing*

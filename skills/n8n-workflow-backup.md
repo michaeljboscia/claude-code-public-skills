@@ -25,7 +25,7 @@ Fast, automated backups of n8n Cloud workflows before making changes. Prevents c
 
 ```bash
 # 1. Single workflow (MOST COMMON - use before editing)
-~/scripts/backup-n8n-workflows.sh "Pain Sensor Data Collection"
+~/scripts/backup-n8n-workflows.sh "Example Workflow"
 
 # 2. Multiple specific workflows
 ~/scripts/backup-n8n-workflows.sh "Workflow 1" "Workflow 2" "Workflow 3"
@@ -37,7 +37,7 @@ Fast, automated backups of n8n Cloud workflows before making changes. Prevents c
 **Typical Workflow:**
 ```bash
 # BEFORE editing workflow
-~/scripts/backup-n8n-workflows.sh "Pain Sensor #1"
+~/scripts/backup-n8n-workflows.sh "Example Workflow"
 
 # Make changes in n8n Cloud UI or via API
 # ...
@@ -73,9 +73,9 @@ Fast, automated backups of n8n Cloud workflows before making changes. Prevents c
 ```
 
 **Examples:**
-- `Pain_Sensor_Data_Collection-backup-2026-01-24.json`
-- `SEOptimer_Enhanced_Extraction-backup-2026-01-24.json`
-- `Bulk_PSI_DESKTOP_Scanner-backup-2026-01-24.json`
+- `Example_Workflow-backup-2026-01-24.json`
+- `Example_Workflow_1-backup-2026-01-24.json`
+- `Example_Workflow_2-backup-2026-01-24.json`
 
 **Notes:**
 - Special characters in workflow names are replaced with underscores
@@ -165,7 +165,7 @@ cat ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Workfl
      -H "X-N8N-API-KEY: ..." | jq -r '.data[].name'
    ```
 2. Copy exact workflow name (including spaces, capitalization)
-3. Use quotes around workflow name: `"Pain Sensor #1"`
+3. Use quotes around workflow name: `"Example Workflow"`
 
 ### Error: "Already backed up today"
 
