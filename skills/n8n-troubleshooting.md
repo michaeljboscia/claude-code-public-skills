@@ -27,7 +27,7 @@ curl -s -o /dev/null -w "%{http_code}" http://192.168.2.110:5678/api/v1/workflow
   --header "X-N8N-API-KEY: YOUR_KEY_HERE"
 
 # Test cloud n8n
-curl -s -o /dev/null -w "%{http_code}" https://binaryanvil.app.n8n.cloud/api/v1/workflows \
+curl -s -o /dev/null -w "%{http_code}" https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows \
   --header "X-N8N-API-KEY: YOUR_KEY_HERE"
 ```
 
@@ -135,7 +135,7 @@ cat ~/Library/Application\ Support/Claude/claude_desktop_config.json | jq .mcpSe
       "MCP_MODE": "stdio",
       "LOG_LEVEL": "error",
       "N8N_API_URL": "http://192.168.2.110:5678",
-      "N8N_API_KEY": "eyJ..."
+      "N8N_API_KEY": "YOUR-API-KEY."
     }
   }
 }
@@ -186,7 +186,7 @@ Expected tools should include:
       "LOG_LEVEL": "error",
       "DISABLE_CONSOLE_OUTPUT": "true",
       "N8N_API_URL": "http://192.168.2.110:5678",
-      "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3ZDU2NGQ0Ni03NzllLTQ3N2EtYTQyNi1mNzc0NjM0ZDFkZGYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY3NDU5NDQ2fQ.uqVDtF9-la_SAoG-EmPHahjh00htbCOICD629HA74A8",
+      "N8N_API_KEY": "YOUR-API-KEY",
       "NODE_TLS_REJECT_UNAUTHORIZED": "0"
     }
   }
@@ -203,8 +203,8 @@ Expected tools should include:
       "MCP_MODE": "stdio",
       "LOG_LEVEL": "error",
       "DISABLE_CONSOLE_OUTPUT": "true",
-      "N8N_API_URL": "https://binaryanvil.app.n8n.cloud",
-      "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZTU1NjRmZS04MmM3LTQ0YmItYTdiZC04ZWNiYzVlNWE2YzAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwMTEzMDM0fQ.AxUds30wNvyexxzVQnvCOcPvXpEkCSTCG9PRKLT7N0E"
+      "N8N_API_URL": "https://your-n8n-cloud.app.n8n.cloud",
+      "N8N_API_KEY": "YOUR-API-KEY"
     }
   }
 }
@@ -284,7 +284,7 @@ tail -20 ~/Library/Logs/Claude/mcp.log
 
 **n8n Instances:**
 - Local: http://192.168.2.110:5678 (your-n8n-server server)
-- Cloud: https://binaryanvil.app.n8n.cloud (production)
+- Cloud: https://your-n8n-cloud.app.n8n.cloud (production)
 
 **Related Files:**
 - MCP Config: `~/Library/Application Support/Claude/claude_desktop_config.json`
