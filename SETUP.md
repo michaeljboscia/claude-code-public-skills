@@ -88,12 +88,12 @@ pkill -f watch-claude-config.sh
 
 ### Step 3: Load Launchd Daemon (Always-On)
 
-The launchd plist is at `~/Library/LaunchAgents/com.binaryanvil.claude-config-watcher.plist`.
+The launchd plist is at `~/Library/LaunchAgents/com.yourcompany.claude-config-watcher.plist`.
 
 **Load the daemon:**
 
 ```bash
-launchctl load ~/Library/LaunchAgents/com.binaryanvil.claude-config-watcher.plist
+launchctl load ~/Library/LaunchAgents/com.yourcompany.claude-config-watcher.plist
 ```
 
 **Verify it's running:**
@@ -104,7 +104,7 @@ launchctl list | grep claude-config-watcher
 
 You should see output like:
 ```
-12345   0   com.binaryanvil.claude-config-watcher
+12345   0   com.yourcompany.claude-config-watcher
 ```
 
 **Check logs:**
@@ -175,7 +175,7 @@ The system automatically strips sensitive information from public versions:
 | `wojvoruhqpmtjtuyrjpf` | `your-supabase-project-ref` |
 | `webhook/abc-123` | `webhook/your-webhook-id` |
 | `Binary Anvil` | `YourCompany` |
-| `binaryanvil.com` | `yourcompany.com` |
+| `yourcompany.com` | `yourcompany.com` |
 | `mboscia` | `yourusername` |
 
 **Review public versions before making repo public:**
@@ -194,14 +194,14 @@ If you find any unsanitized sensitive info, add regex to `sanitize_file()` funct
 ### Stop the Watcher
 
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.binaryanvil.claude-config-watcher.plist
+launchctl unload ~/Library/LaunchAgents/com.yourcompany.claude-config-watcher.plist
 ```
 
 ### Restart the Watcher
 
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.binaryanvil.claude-config-watcher.plist
-launchctl load ~/Library/LaunchAgents/com.binaryanvil.claude-config-watcher.plist
+launchctl unload ~/Library/LaunchAgents/com.yourcompany.claude-config-watcher.plist
+launchctl load ~/Library/LaunchAgents/com.yourcompany.claude-config-watcher.plist
 ```
 
 ### Update Sync Script
@@ -209,7 +209,7 @@ launchctl load ~/Library/LaunchAgents/com.binaryanvil.claude-config-watcher.plis
 If you modify `~/scripts/sync-claude-config.sh`, restart the watcher:
 
 ```bash
-launchctl kickstart -k gui/$(id -u)/com.binaryanvil.claude-config-watcher
+launchctl kickstart -k gui/$(id -u)/com.yourcompany.claude-config-watcher
 ```
 
 ### View Error Logs
@@ -332,7 +332,7 @@ grep "Found shareable" ~/Library/Logs/claude-config-watcher.log | tail
 |------|---------|
 | `~/scripts/sync-claude-config.sh` | Enhanced dual-repo sync script |
 | `~/scripts/watch-claude-config.sh` | File watcher wrapper |
-| `~/Library/LaunchAgents/com.binaryanvil.claude-config-watcher.plist` | Launchd daemon config |
+| `~/Library/LaunchAgents/com.yourcompany.claude-config-watcher.plist` | Launchd daemon config |
 | `~/Library/Logs/claude-config-watcher.log` | Watcher activity log |
 | `~/Library/Logs/claude-config-watcher.error.log` | Error log |
 

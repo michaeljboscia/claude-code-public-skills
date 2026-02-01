@@ -23,11 +23,11 @@ npx --version
 ### 2. Test n8n API Connectivity
 ```bash
 # Test local n8n
-curl -s -o /dev/null -w "%{http_code}" http://192.168.2.110:5678/api/v1/workflows \
+curl -s -o /dev/null -w "%{http_code}" http://YOUR-N8N-SERVER-IP:5678/api/v1/workflows \
   --header "X-N8N-API-KEY: YOUR_KEY_HERE"
 
 # Test cloud n8n
-curl -s -o /dev/null -w "%{http_code}" https://binaryanvil.app.n8n.cloud/api/v1/workflows \
+curl -s -o /dev/null -w "%{http_code}" https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows \
   --header "X-N8N-API-KEY: YOUR_KEY_HERE"
 ```
 
@@ -38,7 +38,7 @@ curl -s -o /dev/null -w "%{http_code}" https://binaryanvil.app.n8n.cloud/api/v1/
 ### 3. Test MCP Package Directly
 ```bash
 # Should launch and show initialization logs
-N8N_API_URL="http://192.168.2.110:5678" \
+N8N_API_URL="http://YOUR-N8N-SERVER-IP:5678" \
 N8N_API_KEY="YOUR_KEY" \
 MCP_MODE="stdio" \
 timeout 3 npx n8n-mcp 2>&1 | head -20
@@ -99,7 +99,7 @@ Homebrew's `reinstall` rebuilds Node.js from scratch, linking it against the cur
 
 2. **Verify n8n API is accessible:**
    ```bash
-   curl -I http://192.168.2.110:5678/healthz
+   curl -I http://YOUR-N8N-SERVER-IP:5678/healthz
    ```
    Expected: HTTP 200
 
@@ -134,7 +134,7 @@ cat ~/Library/Application\ Support/Claude/claude_desktop_config.json | jq .mcpSe
     "env": {
       "MCP_MODE": "stdio",
       "LOG_LEVEL": "error",
-      "N8N_API_URL": "http://192.168.2.110:5678",
+      "N8N_API_URL": "http://YOUR-N8N-SERVER-IP:5678",
       "N8N_API_KEY": "eyJ..."
     }
   }
@@ -185,8 +185,8 @@ Expected tools should include:
       "MCP_MODE": "stdio",
       "LOG_LEVEL": "error",
       "DISABLE_CONSOLE_OUTPUT": "true",
-      "N8N_API_URL": "http://192.168.2.110:5678",
-      "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3ZDU2NGQ0Ni03NzllLTQ3N2EtYTQyNi1mNzc0NjM0ZDFkZGYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY3NDU5NDQ2fQ.uqVDtF9-la_SAoG-EmPHahjh00htbCOICD629HA74A8",
+      "N8N_API_URL": "http://YOUR-N8N-SERVER-IP:5678",
+      "N8N_API_KEY": "YOUR_LOCAL_N8N_API_KEY",
       "NODE_TLS_REJECT_UNAUTHORIZED": "0"
     }
   }
@@ -203,8 +203,8 @@ Expected tools should include:
       "MCP_MODE": "stdio",
       "LOG_LEVEL": "error",
       "DISABLE_CONSOLE_OUTPUT": "true",
-      "N8N_API_URL": "https://binaryanvil.app.n8n.cloud",
-      "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZTU1NjRmZS04MmM3LTQ0YmItYTdiZC04ZWNiYzVlNWE2YzAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwMTEzMDM0fQ.AxUds30wNvyexxzVQnvCOcPvXpEkCSTCG9PRKLT7N0E"
+      "N8N_API_URL": "https://your-n8n-cloud.app.n8n.cloud",
+      "N8N_API_KEY": "YOUR_CLOUD_N8N_API_KEY"
     }
   }
 }
@@ -225,11 +225,11 @@ brew reinstall node
 npx --version
 
 # 4. Test n8n API directly
-curl -s http://192.168.2.110:5678/api/v1/workflows \
+curl -s http://YOUR-N8N-SERVER-IP:5678/api/v1/workflows \
   -H "X-N8N-API-KEY: YOUR_KEY" | head -100
 
 # 5. Test MCP package
-N8N_API_URL="http://192.168.2.110:5678" \
+N8N_API_URL="http://YOUR-N8N-SERVER-IP:5678" \
 N8N_API_KEY="YOUR_KEY" \
 timeout 3 npx n8n-mcp 2>&1 | grep -E "initialized|health check"
 
@@ -283,8 +283,8 @@ tail -20 ~/Library/Logs/Claude/mcp.log
 - MCP Transport: stdio (not HTTP/SSE)
 
 **n8n Instances:**
-- Local: http://192.168.2.110:5678 (your-n8n-server server)
-- Cloud: https://binaryanvil.app.n8n.cloud (production)
+- Local: http://YOUR-N8N-SERVER-IP:5678 (your-n8n-server server)
+- Cloud: https://your-n8n-cloud.app.n8n.cloud (production)
 
 **Related Files:**
 - MCP Config: `~/Library/Application Support/Claude/claude_desktop_config.json`
