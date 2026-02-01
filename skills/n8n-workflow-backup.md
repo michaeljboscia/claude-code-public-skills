@@ -96,10 +96,10 @@ Fast, automated backups of n8n Cloud workflows before making changes. Prevents c
 **Manual Cleanup (if needed):**
 ```bash
 # See all backups
-ls -lh ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/
+ls -lh ~/your-backup-folder/n8n-backups/
 
 # Delete specific old backup
-rm ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Old_Workflow-backup-2025-12-01.json
+rm ~/your-backup-folder/n8n-backups/Old_Workflow-backup-2025-12-01.json
 ```
 
 ---
@@ -130,7 +130,7 @@ curl -X POST "https://your-n8n-cloud.app.n8n.cloud/api/v1/workflows" \
 
 ```bash
 # Read backup file
-cat ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Workflow_Name-backup-2026-01-24.json
+cat ~/your-backup-folder/n8n-backups/Workflow_Name-backup-2026-01-24.json
 
 # Use mcp__n8n-cloud__n8n_create_workflow with the backup JSON
 ```
@@ -174,7 +174,7 @@ cat ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Workfl
 **Not an error!** Script skips duplicate backups to save time. If you need to force a new backup:
 ```bash
 # Delete today's backup first
-rm ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Workflow_Name-backup-$(TZ='America/New_York' date +%Y-%m-%d).json
+rm ~/your-backup-folder/n8n-backups/Workflow_Name-backup-$(TZ='America/New_York' date +%Y-%m-%d).json
 
 # Re-run backup
 ~/scripts/backup-n8n-workflows.sh "Workflow Name"
@@ -276,10 +276,10 @@ PARALLEL_JOBS=10        # How many workflows to backup in parallel (--full mode)
 ~/scripts/backup-n8n-workflows.sh --full
 
 # Check backup worked
-ls -lht ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/ | head
+ls -lht ~/your-backup-folder/n8n-backups/ | head
 
 # View backup contents
-cat ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Workflow_Name-backup-2026-01-24.json | jq .
+cat ~/your-backup-folder/n8n-backups/Workflow_Name-backup-2026-01-24.json | jq .
 
 # Restore from backup
 # Use n8n Cloud UI: Import from File
