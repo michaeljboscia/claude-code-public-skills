@@ -104,6 +104,8 @@ See: `../docs/n8n/n8n-workflow-api-antipattern-spec.md` for complete technical a
 
 ## ⛔ CRITICAL: typeVersion Reference ⛔
 
+**Last verified: January 2026 (n8n Cloud)** — typeVersions change with n8n updates. When in doubt, create a node in the UI and export to see current versions.
+
 **STOP. Every node MUST use these exact typeVersion values. Using outdated versions causes silent failures.**
 
 | Node Type | typeVersion | ⛔ DO NOT USE |
