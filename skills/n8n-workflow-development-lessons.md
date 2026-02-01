@@ -531,6 +531,11 @@ const singleRecord = $('Previous Node').first().json;
 
 ## Anti-Patterns to Avoid
 
+### ❌ Don't: Generate workflow JSON from scratch
+✅ Do: Clone from a known-good workflow that has examples of the nodes you need
+
+**This is critical enough to have its own section.** See `n8n-workflow-development.md` → "⛔ CRITICAL: Workflow Creation Anti-Pattern" for the full "Golden Template Approach" - the n8n API accepts malformed JSON that the UI cannot render, causing silent failures.
+
 ### ❌ Don't: Build entire workflow before testing
 ✅ Do: Test every 2-3 nodes
 
@@ -557,6 +562,7 @@ const singleRecord = $('Previous Node').first().json;
 ## Checklist for New n8n Workflows
 
 **Before Building:**
+- [ ] **Find a template workflow** - Clone from a known-good workflow with similar nodes (see `n8n-workflow-development.md` → Golden Template Approach)
 - [ ] Query external APIs to verify property names
 - [ ] Check database constraints for allowed values
 - [ ] Create backup of any workflow being modified
