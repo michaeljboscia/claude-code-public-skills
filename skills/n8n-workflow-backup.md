@@ -248,7 +248,7 @@ rm ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Workflo
 **Configurable Variables (edit script if needed):**
 ```bash
 N8N_API_URL="https://binaryanvil.app.n8n.cloud"
-BACKUP_DIR="$HOME/My Drive/GTM Machine content/Outbound content pipeline/backups"
+BACKUP_DIR="$HOME/My Drive/GTM Machine content/backups/n8n"
 RETENTION_DAYS=7        # How many days to keep backups
 PARALLEL_JOBS=10        # How many workflows to backup in parallel (--full mode)
 ```
