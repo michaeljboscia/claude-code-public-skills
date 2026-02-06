@@ -64,7 +64,7 @@ Fast, automated backups of n8n Cloud workflows before making changes. Prevents c
 
 **Backup Directory:**
 ```
-~/My Drive/GTM Machine content/Outbound content pipeline/backups/
+~/My Drive/GTM Machine content/backups/n8n/
 ```
 
 **File Naming Convention:**
@@ -118,7 +118,7 @@ rm ~/My\ Drive/GTM\ Machine\ content/Outbound\ content\ pipeline/backups/Old_Wor
 
 ```bash
 # Read backup file and import
-BACKUP_FILE="~/My Drive/GTM Machine content/Outbound content pipeline/backups/Workflow_Name-backup-2026-01-24.json"
+BACKUP_FILE="~/My Drive/GTM Machine content/backups/n8n/Workflow_Name-backup-2026-01-24.json"
 
 curl -X POST "https://binaryanvil.app.n8n.cloud/api/v1/workflows" \
   -H "X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZTU1NjRmZS04MmM3LTQ0YmItYTdiZC04ZWNiYzVlNWE2YzAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzYwMTEzMDM0fQ.AxUds30wNvyexxzVQnvCOcPvXpEkCSTCG9PRKLT7N0E" \
