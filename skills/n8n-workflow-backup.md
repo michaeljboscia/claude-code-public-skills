@@ -74,7 +74,6 @@ Fast, automated backups of n8n Cloud workflows before making changes. Prevents c
 
 **Examples:**
 - `Pain_Sensor_Data_Collection-backup-2026-01-24.json`
-- `SEOptimer_Enhanced_Extraction-backup-2026-01-24.json`
 - `Bulk_PSI_DESKTOP_Scanner-backup-2026-01-24.json`
 
 **Notes:**
